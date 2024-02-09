@@ -1,0 +1,11 @@
+type: object
+properties:
+  data:
+    type: object
+    properties:
+      total_user:
+        type: integer 
+      total_course:
+        type: integer
+      total_free_course:
+        type: integer

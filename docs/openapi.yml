@@ -1,0 +1,620 @@
+openapi: "3.0.2"
+info:
+  title: API Title
+  version: "1.0"
+servers:
+  - url: http://localhost:5000/api/v1
+tags:
+  - name: "Admin"
+  - name: "User"
+  - name: "Auth"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    cookie:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  #
+  # AUTH
+  #
+  /auth/register:
+    post:
+      tags:
+        - "Auth"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./schema/request/register_request.yml"
+      responses:
+        "200":
+          description: User registration is succeded
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "400":
+          description: Form validation error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "409":
+          description: Conflict, email already exists in database
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+  /auth/login:
+    post:
+      tags:
+        - "Auth"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./schema/request/login_request.yml"
+      responses:
+        "200":
+          description: User login is succeded
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/token_response.yml"
+        "400":
+          description: Form validation error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "401":
+          description: Unauthorized, user not found
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+  /auth/refresh:
+    post:
+      tags:
+        - "Auth"
+      security:
+        - cookie: []
+      responses:
+        "200":
+          description: User succeded in getting new access token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/token_response.yml"
+        "401":
+          description: Unauthorized, user not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+  #
+  # Categories
+  #
+  /categories:
+    get:
+      tags:
+        - "Admin"
+        - "User"
+      parameters:
+        - in: query
+          name: page
+          description: applying pagination
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: pageSize
+          description: applying pagination
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: sortByPopularCourse
+          description: applying sort by popular
+          schema:
+            type: boolean
+      security:
+        - bearer: []
+      responses:
+        "200":
+          description: Success getting all categories
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/category_list_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+    post:
+      tags:
+        - "Admin"
+      security:
+        - bearer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./schema/request/category_request.yml"
+      responses:
+        "200":
+          description: Success creating a category
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/category_response.yml"
+        "400":
+          description: Form validation error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+  /categories/{id}:
+    parameters:
+      - in: path
+        name: id
+        description: ID of category
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - "Admin"
+        - "User"
+      security:
+        - bearer: []
+      responses:
+        "200":
+          description: Success getting a categories by ID
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/category_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+    put:
+      tags:
+        - "Admin"
+      security:
+        - bearer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./schema/request/category_request.yml"
+      responses:
+        "200":
+          description: Success updating the category
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/category_response.yml"
+        "400":
+          description: Form validation error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+    delete:
+      tags:
+        - "Admin"
+      security:
+        - bearer: []
+      responses:
+        "200":
+          description: Success deleting the category
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "400":
+          description: Form validation error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+  #
+  # Courses
+  #
+  /courses:
+    get:
+      parameters:
+        - in: query
+          name: categoryId
+          description: Filter course with specific category
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: minimumPrice
+          description: Filter course with minimum price set
+          schema:
+            type: integer
+            minimum: 0
+        - in: query
+          name: maximumPrice
+          description: Filter course with maximum price set
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: isFree
+          description: Filter free course
+          schema:
+            type: boolean
+        - in: query
+          name: name
+          description: Filter course by non senstive case name
+          schema:
+            type: string
+      tags:
+        - "Admin"
+        - "User"
+      security:
+        - bearer: []
+      responses:
+        "200":
+          description: Success getting all course
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/course_list_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+    post:
+      tags:
+        - "Admin"
+      security:
+        - bearer: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "./schema/request/course_request.yml"
+      responses:
+        "200":
+          description: Success creating a course
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/course_response.yml"
+        "400":
+          description: Form validation error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+  /courses/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          description: ID of course
+          schema:
+            type: integer
+            minimum: 1
+          required: true
+      tags:
+        - "Admin"
+        - "User"
+      security:
+        - bearer: []
+      responses:
+        "200":
+          description: Success getting the course by ID
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/course_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+    put:
+      tags:
+        - "Admin"
+      security:
+        - bearer: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "./schema/request/course_request.yml"
+      responses:
+        "200":
+          description: Success creating a course
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/course_response.yml"
+        "400":
+          description: Form validation error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+    delete:
+      tags:
+        - "Admin"
+      security:
+        - bearer: []
+      responses:
+        "200":
+          description: Success deleting the course
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "400":
+          description: Form validation error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+  #
+  # Users
+  #
+  /admin/users:
+    get:
+      parameters:
+        - in: query
+          name: page
+          description: applying pagination
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: pageSize
+          description: applying pagination
+          schema:
+            type: integer
+            minimum: 1
+      tags:
+        - "Admin"
+      security:
+        - bearer: []
+      responses:
+        "200":
+          description: Success getting al users
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/user_list_response.yml"
+        "400":
+          description: Form validation error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+  /admin/users/{id}:
+    parameters:
+      - in: path 
+        name: id
+        description: ID of user
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - "Admin"
+      security:
+        - bearer: []
+      responses:
+        "200":
+          description: Success getting a user
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/user_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+    delete:
+      tags:
+        - "Admin"
+      security:
+        - bearer: []
+      responses:
+        "200":
+          description: Success deleting a user
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+  #
+  # Statistic
+  #
+  /admin/statistic:
+    get:
+      tags:
+        - "Admin"
+      security:
+        - bearer: []
+      responses:
+        "200":
+            description: Success getting the statistic
+            content:
+              application/json:
+                schema:
+                  $ref: "./schema/response/statistic_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"

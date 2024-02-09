@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres 
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/var/lib/redis 
+      - redis-config:/usr/local/etc/redis/redis.conf 
+
+volumes:
+  postgres-db: 
+  redis: 
+  redis-config: 

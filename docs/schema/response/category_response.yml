@@ -1,0 +1,13 @@
+type: object 
+properties:
+  data:
+    type: object
+    properties:
+      id:   
+        type: integer
+      name:   
+        type: string 
+      created_at:
+        type: string 
+      updated_at:
+        type: string

@@ -1,0 +1,19 @@
+type: object
+properties: 
+  data:
+    type: array
+    items:
+      type: object 
+      properties:
+        id: 
+          type: string
+        name: 
+          type: string 
+        category:
+          type: string 
+        price_idr:
+          type: float
+        banner_link:
+          type: string 
+        total_user: 
+          type: integer
