@@ -129,7 +129,7 @@ func VerifyAccessToken(ctx context.Context, viperConfig *viper.Viper, redisClien
 		return nil, fiber.NewError(fiber.StatusUnauthorized, "Invalid token")
 	}
 
-	// Check if token that given from request are same with token that stored in Redis
+	// Check if token that given from request is same with token that stored in Redis
 	if tokenRedis != token {
 		log.Warnf("Invalid auth token")
 		return nil, fiber.NewError(fiber.StatusUnauthorized, "Invalid token")

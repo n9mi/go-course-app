@@ -12,6 +12,10 @@ func NewCategoryController() *CategoryController {
 	return &CategoryController{}
 }
 
+func (ct *CategoryController) Get(c *fiber.Ctx) error {
+	return c.Status(fiber.StatusOK).JSON("Categories...")
+}
+
 func (ct *CategoryController) Create(c *fiber.Ctx) error {
 	authData, ok := c.Locals("AuthData").(model.UserAuthData)
 	if !ok {

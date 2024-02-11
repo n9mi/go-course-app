@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"github.com/casbin/casbin/v2"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/redis/go-redis/v9"
@@ -13,8 +14,8 @@ type MiddlewareSetup struct {
 }
 
 func Setup(viperConfig *viper.Viper, validate *validator.Validate, redisClient *redis.Client,
-	log *logrus.Logger) *MiddlewareSetup {
+	log *logrus.Logger, enforcer *casbin.Enforcer) *MiddlewareSetup {
 	return &MiddlewareSetup{
-		AuthMiddleware: NewAuthMiddleware(viperConfig, redisClient, validate, log),
+		AuthMiddleware: NewAuthMiddleware(viperConfig, redisClient, validate, log, enforcer),
 	}
 }

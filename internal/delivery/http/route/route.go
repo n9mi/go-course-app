@@ -24,6 +24,7 @@ func (c *RouteConfig) Setup() {
 
 	c.SetupAuthRoute(route)
 	c.SetupAdminRoute(route)
+	c.SetupUserRoute(route)
 }
 
 func (c *RouteConfig) SetupAuthRoute(route fiber.Router) {
@@ -36,4 +37,11 @@ func (c *RouteConfig) SetupAdminRoute(route fiber.Router) {
 	admin := route.Group("/admin")
 	admin.Use(c.MiddlewareSetup.AuthMiddleware)
 	admin.Post("/categories", c.ControllerSetup.CategoryController.Create)
+}
+
+func (c *RouteConfig) SetupUserRoute(route fiber.Router) {
+	admin := route.Group("/user")
+	admin.Use(c.MiddlewareSetup.AuthMiddleware)
+	admin.Get("/categories", c.ControllerSetup.CategoryController.Get)
+	admin.Get("/categories/:id", c.ControllerSetup.CategoryController.Get)
 }

@@ -1,8 +1,10 @@
 package middleware
 
 import (
+	"fmt"
 	"strings"
 
+	"github.com/casbin/casbin/v2"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/n9mi/go-course-app/internal/helper"
@@ -13,7 +15,7 @@ import (
 )
 
 func NewAuthMiddleware(viperConfig *viper.Viper, redisClient *redis.Client, validate *validator.Validate,
-	log *logrus.Logger) func(c *fiber.Ctx) error {
+	log *logrus.Logger, enforcer *casbin.Enforcer) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		header := c.Get("Authorization", "")
 
@@ -37,9 +39,29 @@ func NewAuthMiddleware(viperConfig *viper.Viper, redisClient *redis.Client, vali
 			return err
 		}
 
-		// Store auth data in Locals
-		c.Locals("AuthData", *userAuthData)
+		fmt.Println("PATH: ", c.Path())
 
-		return c.Next()
+		// Apply casbin enforcer, loop through roles
+		roles := userAuthData.Roles
+		isRoleExist := false
+		for _, casbinSubject := range roles {
+			enforce, err := enforcer.Enforce(casbinSubject, c.Path(), c.Method())
+			if err != nil {
+				log.Warnf("Failed to enforce path")
+				return fiber.ErrInternalServerError
+			}
+			if enforce {
+				isRoleExist = true
+			}
+		}
+		if isRoleExist {
+			// Store auth data in Locals
+			c.Locals("AuthData", *userAuthData)
+
+			return c.Next()
+		}
+
+		log.Warnf("Forbidden error, user role doesn't match")
+		return fiber.ErrForbidden
 	}
 }

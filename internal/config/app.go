@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/casbin/casbin/v2"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/n9mi/go-course-app/database/migration"
@@ -23,6 +24,7 @@ type ConfigBootstrap struct {
 	Validate    *validator.Validate
 	RedisClient *redis.Client
 	Log         *logrus.Logger
+	Enforcer    *casbin.Enforcer
 }
 
 func Bootstrap(configBootstrap *ConfigBootstrap) {
@@ -46,7 +48,8 @@ func Bootstrap(configBootstrap *ConfigBootstrap) {
 		configBootstrap.ViperConfig,
 		configBootstrap.Validate,
 		configBootstrap.RedisClient,
-		configBootstrap.Log)
+		configBootstrap.Log,
+		configBootstrap.Enforcer)
 
 	// Setup Route
 	routeConfig := route.RouteConfig{

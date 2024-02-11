@@ -13,6 +13,7 @@ func main() {
 	db := config.NewDatabase(viperConfig, log)
 	redisClient := config.NewRedisClient(viperConfig)
 	validate := config.NewValidator(viperConfig)
+	enforcer := config.NewEnforcer(log)
 
 	configBootstrap := &config.ConfigBootstrap{
 		ViperConfig: viperConfig,
@@ -21,6 +22,7 @@ func main() {
 		Validate:    validate,
 		RedisClient: redisClient,
 		Log:         log,
+		Enforcer:    enforcer,
 	}
 	config.Bootstrap(configBootstrap)
 
