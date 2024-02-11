@@ -43,9 +43,8 @@ func customErrorHandler() func(*fiber.Ctx, error) error {
 							fmt.Sprintf("%s should be a valid email", errItem.Field()))
 					}
 				}
-			} else {
-				// Set default as interanl server error
-				response = model.WebResponse[any]{Code: fiber.StatusInternalServerError, Messages: []string{err.Error()}}
+			} else if errConv, ok := err.(*fiber.Error); ok {
+				response = model.WebResponse[any]{Code: errConv.Code, Messages: []string{errConv.Message}}
 			}
 
 			return c.Status(response.Code).JSON(response)

@@ -17,6 +17,7 @@ func Setup(viperConfig *viper.Viper, db *gorm.DB, validate *validator.Validate, 
 	log *logrus.Logger, repositorySetup *repository.RepositorySetup) *UseCaseSetup {
 
 	return &UseCaseSetup{
-		AuthUseCase: NewAuthUseCase(viperConfig, db, validate, redisClient, log, repositorySetup.UserRepository),
+		AuthUseCase: NewAuthUseCase(viperConfig, db, validate, redisClient, log,
+			repositorySetup.UserRepository, repositorySetup.RoleRepository),
 	}
 }

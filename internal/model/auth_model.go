@@ -1,15 +1,14 @@
 package model
 
-type RoleData struct {
-	ID          string `json:"id"`
-	DisplayName string `json:"display_name"`
+type AuthToken struct {
+	Token string `validate:"required"`
 }
 
 type UserAuthData struct {
 	ID    string
 	Name  string
 	Email string
-	Roles []RoleData
+	Roles []string
 }
 
 type RegisterRequest struct {
@@ -29,4 +28,8 @@ type TokenResponse struct {
 	RefreshTokenName string `json:"-"`
 	AccessToken      string `json:"access_token"`
 	AccessExpAt      int64  `json:"-"`
+}
+
+type RefreshRequest struct {
+	RefreshToken string `json:"-" validate:"required"`
 }

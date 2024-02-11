@@ -6,12 +6,14 @@ import (
 )
 
 type ControllerSetup struct {
-	AuthController *AuthController
+	AuthController     *AuthController
+	CategoryController *CategoryController
 }
 
 func Setup(useCaseSetup *usecase.UseCaseSetup, log *logrus.Logger) *ControllerSetup {
 
 	return &ControllerSetup{
-		AuthController: NewAuthController(useCaseSetup.AuthUseCase, log),
+		AuthController:     NewAuthController(useCaseSetup.AuthUseCase, log),
+		CategoryController: NewCategoryController(),
 	}
 }
