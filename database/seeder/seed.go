@@ -96,8 +96,8 @@ func SeedUsers(db *gorm.DB, userRepository *repository.UserRepository, roles []e
 			newPassword, _ := helper.GeneratePassword("password")
 			newUser := entity.User{
 				ID:       "USR_" + helper.GenerateRandomString(12),
-				Name:     fmt.Sprintf("User %d", i),
-				Email:    fmt.Sprintf("user%d@mail.com", i),
+				Name:     fmt.Sprintf("%s %d", r.DisplayName, i),
+				Email:    fmt.Sprintf("%s%d@mail.com", r.ID, i),
 				Password: newPassword,
 			}
 			tx := db.Begin()
