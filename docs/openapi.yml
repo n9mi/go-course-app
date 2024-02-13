@@ -137,7 +137,7 @@ paths:
             type: integer
             minimum: 1
         - in: query
-          name: sortByPopularCourse
+          name: sortByPopular
           description: applying sort by popular
           schema:
             type: boolean
@@ -302,6 +302,18 @@ paths:
     get:
       parameters:
         - in: query
+          name: page
+          description: applying pagination
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: pageSize
+          description: applying pagination
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
           name: categoryId
           description: Filter course with specific category
           schema:
@@ -309,16 +321,14 @@ paths:
             minimum: 1
         - in: query
           name: minimumPrice
-          description: Filter course with minimum price set
+          description: Sort by cheapest courses
           schema:
-            type: integer
-            minimum: 0
+            type: boolean
         - in: query
           name: maximumPrice
-          description: Filter course with maximum price set
+          description: Sort by most expensive courses
           schema:
-            type: integer
-            minimum: 1
+            type: boolean
         - in: query
           name: isFree
           description: Filter free course
@@ -618,3 +628,92 @@ paths:
             application/json:
               schema:
                 $ref: "./schema/response/message_response.yml"
+  #
+  # Buy course
+  #
+  /course/{id}/buy:
+    post:
+      tags:
+        - "User"
+      parameters:
+        - in: path
+          name: id
+          description: course ID
+          required: true
+          schema:
+            type: string
+      security:
+        - bearer: []
+      requestBody:
+        content:
+          application/json: 
+            schema:
+              $ref: "./schema/request/buy_course_request.yml"
+      responses:
+        "200":
+          description: "Success making a purchase. Purchase status will be pending - waiting for payment"
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/purchase_response.yml"
+        "400":
+          description: Form validation error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+  #
+  # Purchase course
+  #
+  /purchases/{id}/pay:
+    post:
+      tags:
+        - "User"
+      parameters:
+        - in: path
+          name: id
+          description: purchase ID
+          required: true
+          schema:
+            type: string
+      security:
+        - bearer: []
+      responses:
+        "200":
+          description: "Success making a purchase. Purchase status will be success."
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/purchase_response.yml"
+        "400":
+          description: Form validation error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "401":
+          description: Unauthorized, unauthenticated user, missing token
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
+
+

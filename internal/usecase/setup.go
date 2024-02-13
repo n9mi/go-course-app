@@ -10,7 +10,8 @@ import (
 )
 
 type UseCaseSetup struct {
-	AuthUseCase *AuthUseCase
+	AuthUseCase     *AuthUseCase
+	CategoryUseCase *CategoryUseCase
 }
 
 func Setup(viperConfig *viper.Viper, db *gorm.DB, validate *validator.Validate, redisClient *redis.Client,
@@ -19,5 +20,6 @@ func Setup(viperConfig *viper.Viper, db *gorm.DB, validate *validator.Validate, 
 	return &UseCaseSetup{
 		AuthUseCase: NewAuthUseCase(viperConfig, db, validate, redisClient, log,
 			repositorySetup.UserRepository, repositorySetup.RoleRepository),
+		CategoryUseCase: NewCategoryUseCase(db, validate, log, repositorySetup.CategoryRepository),
 	}
 }

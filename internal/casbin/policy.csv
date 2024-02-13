@@ -1,9 +1,8 @@
-p, admin, /api/admin/categories, POST
+p, admin, /api/admin/categories, GET
 
-p, user, /api/user/categories, GET
-p, user, /api/user/categories/{id}, GET
+p, user, /api/categories, GET
+p, user, /api/categories/{id}, GET
 
 p, guest, /api/auth/login, POST
 p, guest, /api/auth/register, POST
-p, guest, /api/blogs, GET
 

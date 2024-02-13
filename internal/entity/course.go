@@ -11,6 +11,7 @@ type Course struct {
 	PriceIdr      float64
 	BannerLink    string
 	CreatedBy     string
+	MemberCount   uint64
 	Purchases     []Purchase
 	CourseMembers []CourseMember
 }

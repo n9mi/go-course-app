@@ -14,8 +14,22 @@ func NewCourseRepository() *CourseRepository {
 }
 
 func (r *CourseRepository) AddMember(tx *gorm.DB, course *entity.Course, user *entity.User) error {
-	return tx.Create(&entity.CourseMember{
+	if err := tx.Create(&entity.CourseMember{
 		CourseID: course.ID,
 		UserID:   user.ID,
-	}).Error
+	}).Error; err != nil {
+		return err
+	}
+
+	if err := tx.Model(new(entity.Category)).Where("id = ?", course.CategoryID).
+		UpdateColumn("member_count", gorm.Expr("member_count + ?", 1)).Error; err != nil {
+		return err
+	}
+
+	if err := tx.Model(new(entity.Course)).Where("id = ?", course.ID).
+		UpdateColumn("member_count", gorm.Expr("member_count + ?", 1)).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

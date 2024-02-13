@@ -1,7 +1,6 @@
 package seeder
 
 import (
-	"context"
 	"fmt"
 	"math/rand"
 	"time"
@@ -28,7 +27,7 @@ func Seed(db *gorm.DB, redisClient *redis.Client, repositoryBootstrap *repositor
 
 	fmt.Println("Successfully seeds the users")
 
-	categories, err := SeedCategories(db, redisClient, repositoryBootstrap.CategoryRepository,
+	categories, err := SeedCategories(db, repositoryBootstrap.CategoryRepository,
 		repositoryBootstrap.UserRepository, users)
 	if err != nil {
 		return err
@@ -36,7 +35,7 @@ func Seed(db *gorm.DB, redisClient *redis.Client, repositoryBootstrap *repositor
 
 	fmt.Println("Successfully seeds the categories")
 
-	courses, err := SeedCourses(db, redisClient, repositoryBootstrap.CourseRepository, categories)
+	courses, err := SeedCourses(db, repositoryBootstrap.CourseRepository, categories)
 	if err != nil {
 		return err
 	}
@@ -59,7 +58,7 @@ func Seed(db *gorm.DB, redisClient *redis.Client, repositoryBootstrap *repositor
 
 	fmt.Println("Successfully seeds the purchases")
 
-	err = SeedCourseMembers(db, redisClient, repositoryBootstrap.CourseRepository, repositoryBootstrap.UserRepository,
+	err = SeedCourseMembers(db, repositoryBootstrap.CourseRepository, repositoryBootstrap.UserRepository,
 		purchases)
 	if err != nil {
 		return err
@@ -117,7 +116,7 @@ func SeedUsers(db *gorm.DB, userRepository *repository.UserRepository, roles []e
 	return users, nil
 }
 
-func SeedCategories(db *gorm.DB, redisClient *redis.Client, categoryRepository *repository.CategoryRepository,
+func SeedCategories(db *gorm.DB, categoryRepository *repository.CategoryRepository,
 	userRepository *repository.UserRepository, users []entity.User) ([]entity.Category, error) {
 	var categories []entity.Category
 
@@ -137,11 +136,6 @@ func SeedCategories(db *gorm.DB, redisClient *redis.Client, categoryRepository *
 				}
 				tx.Commit()
 				categories = append(categories, newCategory)
-				redisClient.ZAdd(context.Background(), "CATEGORY_MEMBER_COUNT",
-					redis.Z{
-						Score:  0,
-						Member: newCategory.ID,
-					})
 			}
 		}
 	}
@@ -149,7 +143,7 @@ func SeedCategories(db *gorm.DB, redisClient *redis.Client, categoryRepository *
 	return categories, nil
 }
 
-func SeedCourses(db *gorm.DB, redisClient *redis.Client, courseRepository *repository.CourseRepository,
+func SeedCourses(db *gorm.DB, courseRepository *repository.CourseRepository,
 	categories []entity.Category) ([]entity.Course, error) {
 	var courses []entity.Course
 	minPrice := 10000
@@ -173,11 +167,6 @@ func SeedCourses(db *gorm.DB, redisClient *redis.Client, courseRepository *repos
 			}
 			tx.Commit()
 			courses = append(courses, newCourse)
-			redisClient.ZAdd(context.Background(), "COURSE_MEMBER_COUNT",
-				redis.Z{
-					Score:  0,
-					Member: newCourse.ID,
-				})
 		}
 	}
 
@@ -250,7 +239,7 @@ func SeedPurchases(db *gorm.DB, purchaseRepository *repository.PurchaseRepositor
 	return purchases, nil
 }
 
-func SeedCourseMembers(db *gorm.DB, redisClient *redis.Client, courseRepository *repository.CourseRepository,
+func SeedCourseMembers(db *gorm.DB, courseRepository *repository.CourseRepository,
 	userRepository *repository.UserRepository, purchases []entity.Purchase) error {
 	for _, p := range purchases {
 		tx := db.Begin()
@@ -265,11 +254,6 @@ func SeedCourseMembers(db *gorm.DB, redisClient *redis.Client, courseRepository 
 			return err
 		}
 		tx.Commit()
-
-		redisClient.ZIncrBy(context.Background(), "CATEGORY_MEMBER_COUNT", 1,
-			courseFound.CategoryID)
-		redisClient.ZIncrBy(context.Background(), "COURSE_MEMBER_COUNT", 1,
-			courseFound.ID)
 	}
 	return nil
 }

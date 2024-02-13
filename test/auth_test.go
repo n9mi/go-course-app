@@ -132,6 +132,7 @@ func TestLogin(t *testing.T) {
 			require.Nil(t, err)
 
 			require.Equal(t, testProps["expected_code"], response.StatusCode)
+			fmt.Println()
 
 			if response.StatusCode == fiber.StatusOK {
 				if testProps["request_email"] == validAdminData.Email {

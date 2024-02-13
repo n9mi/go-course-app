@@ -1,0 +1,14 @@
+type: object
+properties:
+  purchase_id:  
+    type: string 
+  course_id:
+    type: string 
+  course_name:
+    type: string 
+  status: 
+    type: string 
+  purchase_deadline:
+    type: string 
+  purchased_at:
+    type: string
