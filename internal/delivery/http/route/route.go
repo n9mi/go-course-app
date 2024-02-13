@@ -36,11 +36,14 @@ func (c *RouteConfig) SetupAuthRoute(route fiber.Router) {
 func (c *RouteConfig) SetupAdminRoute(route fiber.Router) {
 	admin := route.Group("/admin")
 	admin.Use(c.MiddlewareSetup.AuthMiddleware)
+
 	admin.Get("/categories", c.ControllerSetup.AdminCategoryController.GetAll)
+	admin.Post("/categories", c.ControllerSetup.AdminCategoryController.Create)
 }
 
 func (c *RouteConfig) SetupUserRoute(route fiber.Router) {
 	user := route.Group("")
 	user.Use(c.MiddlewareSetup.AuthMiddleware)
+
 	user.Get("/categories", c.ControllerSetup.UserCategoryController.GetAll)
 }

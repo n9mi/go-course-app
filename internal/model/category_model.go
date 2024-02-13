@@ -9,6 +9,11 @@ type CategoryListRequest struct {
 	UserID        string
 }
 
+type CategoryCreateRequest struct {
+	Name      string `json:"name" validate:"required"`
+	CreatedBy string `json:"created_by" validate:"required"`
+}
+
 type CategoryResponse struct {
 	ID          string    `json:"id"`
 	Name        string    `json:"name"`

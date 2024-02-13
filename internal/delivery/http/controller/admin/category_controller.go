@@ -45,3 +45,26 @@ func (ct *CategoryController) GetAll(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(response)
 }
+
+func (ct *CategoryController) Create(c *fiber.Ctx) error {
+	authData, ok := c.Locals("AuthData").(model.UserAuthData)
+	if !ok {
+		ct.Log.Warn("Failed to get user auth data")
+		return fiber.ErrForbidden
+	}
+
+	request := new(model.CategoryCreateRequest)
+	if err := c.BodyParser(request); err != nil {
+		ct.Log.Warnf("Failed to parsing category : %+v", err)
+		return fiber.ErrBadRequest
+	}
+	request.CreatedBy = authData.ID
+
+	response, err := ct.CategoryUseCase.Create(c.UserContext(), request)
+	if err != nil {
+		ct.Log.Warnf("Failed to create category : %+v", err)
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(response)
+}
