@@ -50,18 +50,57 @@ func (u *CategoryUseCase) Create(ctx context.Context, request *model.CategoryCre
 		return nil, err
 	}
 
-	categoryEntity := entity.Category{
+	category := entity.Category{
 		ID:        "CAT_" + helper.GenerateRandomString(10),
 		Name:      request.Name,
-		CreatedBy: request.CreatedBy,
+		CreatedBy: request.UserID,
 	}
-	if err := u.CategoryRepository.Repository.Save(tx, &categoryEntity); err != nil {
+	if err := u.CategoryRepository.Repository.Save(tx, &category); err != nil {
 		u.Log.Warnf("Failed to insert into 'categories' : %+v", err)
 		return nil, fiber.ErrInternalServerError
 	}
 
 	categoryResponse := new(model.CategoryResponse)
-	if err := u.CategoryRepository.FindByID(tx, categoryResponse, categoryEntity.ID); err != nil {
+	if err := u.CategoryRepository.FindByID(tx, categoryResponse, category.ID); err != nil {
+		u.Log.Warnf("Failed to fetch from 'categories' : %+v", err)
+		return nil, fiber.ErrInternalServerError
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		u.Log.Warnf("Failed to commit into 'categories' : %+v", err)
+		return nil, fiber.ErrInternalServerError
+	}
+
+	return categoryResponse, nil
+}
+
+func (u *CategoryUseCase) Update(ctx context.Context, request *model.CategoryUpdateRequest) (*model.CategoryResponse, error) {
+	tx := u.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	if err := u.Validate.Struct(request); err != nil {
+		return nil, err
+	}
+
+	category := new(entity.Category)
+	if err := u.CategoryRepository.Repository.FindByID(tx, category, request.ID); err != nil {
+		u.Log.Warnf("Category with ID %+s is not found : %+v", request.ID, err)
+		return nil, fiber.ErrNotFound
+	}
+
+	if category.CreatedBy != request.UserID {
+		u.Log.Warnf("Forbidden : Attempt to update category with ID %s by user %s ", category.ID, request.UserID)
+		return nil, fiber.ErrForbidden
+	}
+
+	category.Name = request.Name
+	if err := u.CategoryRepository.Repository.Save(tx, category); err != nil {
+		u.Log.Warnf("Failed to update into 'categories' : %+v", err)
+		return nil, fiber.ErrInternalServerError
+	}
+
+	categoryResponse := new(model.CategoryResponse)
+	if err := u.CategoryRepository.FindByID(tx, categoryResponse, category.ID); err != nil {
 		u.Log.Warnf("Failed to fetch from 'categories' : %+v", err)
 		return nil, fiber.ErrInternalServerError
 	}
