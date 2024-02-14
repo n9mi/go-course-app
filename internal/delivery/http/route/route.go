@@ -40,6 +40,7 @@ func (c *RouteConfig) SetupAdminRoute(route fiber.Router) {
 	admin.Get("/categories", c.ControllerSetup.AdminCategoryController.GetAll)
 	admin.Post("/categories", c.ControllerSetup.AdminCategoryController.Create)
 	admin.Put("/categories/:id", c.ControllerSetup.AdminCategoryController.Update)
+	admin.Delete("/categories/:id", c.ControllerSetup.AdminCategoryController.Delete)
 }
 
 func (c *RouteConfig) SetupUserRoute(route fiber.Router) {

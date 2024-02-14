@@ -20,6 +20,11 @@ type CategoryUpdateRequest struct {
 	UserID string `json:"-" validate:"required"`
 }
 
+type CategoryDeleteRequest struct {
+	ID     string `json:"-" validate:"required"`
+	UserID string `json:"-" validate:"required"`
+}
+
 type CategoryResponse struct {
 	ID          string    `json:"id"`
 	Name        string    `json:"name"`

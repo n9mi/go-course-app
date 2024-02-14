@@ -64,3 +64,7 @@ func (r *CategoryRepository) FindByID(tx *gorm.DB, category *model.CategoryRespo
 
 	return nil
 }
+
+func (r *CategoryRepository) FindByIDandUserID(tx *gorm.DB, category *entity.Category, ID string, userID string) error {
+	return tx.Where("id = ? and created_by = ?", ID, userID).Take(category).Error
+}

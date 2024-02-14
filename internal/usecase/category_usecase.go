@@ -47,6 +47,7 @@ func (u *CategoryUseCase) Create(ctx context.Context, request *model.CategoryCre
 	defer tx.Rollback()
 
 	if err := u.Validate.Struct(request); err != nil {
+		u.Log.Warnf("Failed to validate category : %+v", err)
 		return nil, err
 	}
 
@@ -79,18 +80,14 @@ func (u *CategoryUseCase) Update(ctx context.Context, request *model.CategoryUpd
 	defer tx.Rollback()
 
 	if err := u.Validate.Struct(request); err != nil {
+		u.Log.Warnf("Failed to validate category : %+v", err)
 		return nil, err
 	}
 
 	category := new(entity.Category)
-	if err := u.CategoryRepository.Repository.FindByID(tx, category, request.ID); err != nil {
-		u.Log.Warnf("Category with ID %+s is not found : %+v", request.ID, err)
+	if err := u.CategoryRepository.FindByIDandUserID(tx, category, request.ID, request.UserID); err != nil {
+		u.Log.Warnf("Category with ID %s created by %s is not found : %+v", request.ID, request.UserID, err)
 		return nil, fiber.ErrNotFound
-	}
-
-	if category.CreatedBy != request.UserID {
-		u.Log.Warnf("Forbidden : Attempt to update category with ID %s by user %s ", category.ID, request.UserID)
-		return nil, fiber.ErrForbidden
 	}
 
 	category.Name = request.Name
@@ -111,4 +108,32 @@ func (u *CategoryUseCase) Update(ctx context.Context, request *model.CategoryUpd
 	}
 
 	return categoryResponse, nil
+}
+
+func (u *CategoryUseCase) Delete(ctx context.Context, request *model.CategoryDeleteRequest) error {
+	tx := u.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	if err := u.Validate.Struct(request); err != nil {
+		u.Log.Warnf("Failed to validate category : %+v", err)
+		return err
+	}
+
+	category := new(entity.Category)
+	if err := u.CategoryRepository.FindByIDandUserID(tx, category, request.ID, request.UserID); err != nil {
+		u.Log.Warnf("Category with ID %s created by %s is not found : %+v", request.ID, request.UserID, err)
+		return fiber.ErrNotFound
+	}
+
+	if err := u.CategoryRepository.Repository.Delete(tx, category); err != nil {
+		u.Log.Warnf("Failed to delete category with ID %s : %+v", request.ID, err)
+		return fiber.ErrInternalServerError
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		u.Log.Warnf("Failed to commit into 'categories' : %+v", err)
+		return fiber.ErrInternalServerError
+	}
+
+	return nil
 }

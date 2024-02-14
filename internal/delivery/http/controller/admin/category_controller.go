@@ -94,3 +94,24 @@ func (ct *CategoryController) Update(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(response)
 }
+
+func (ct *CategoryController) Delete(c *fiber.Ctx) error {
+	categoryId := c.Params("id")
+
+	authData, ok := c.Locals("AuthData").(model.UserAuthData)
+	if !ok {
+		ct.Log.Warn("Failed to get user auth data")
+		return fiber.ErrForbidden
+	}
+
+	request := new(model.CategoryDeleteRequest)
+	request.ID = categoryId
+	request.UserID = authData.ID
+
+	if err := ct.CategoryUseCase.Delete(c.UserContext(), request); err != nil {
+		ct.Log.Warnf("Failed to delete category : %+v", err)
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(model.WebResponse[any]{Data: nil})
+}

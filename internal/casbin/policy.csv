@@ -1,6 +1,7 @@
 p, admin, /api/admin/categories, GET
 p, admin, /api/admin/categories, POST
 p, admin, /api/admin/categories/{id}, PUT
+p, admin, /api/admin/categories/{id}, DELETE
 
 p, user, /api/categories, GET
 p, user, /api/categories/{id}, GET
