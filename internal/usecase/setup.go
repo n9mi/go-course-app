@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/go-playground/validator/v10"
 	"github.com/n9mi/go-course-app/internal/repository"
 	"github.com/redis/go-redis/v9"
@@ -12,14 +13,18 @@ import (
 type UseCaseSetup struct {
 	AuthUseCase     *AuthUseCase
 	CategoryUseCase *CategoryUseCase
+	CourseUseCase   *CourseUseCase
 }
 
 func Setup(viperConfig *viper.Viper, db *gorm.DB, validate *validator.Validate, redisClient *redis.Client,
-	log *logrus.Logger, repositorySetup *repository.RepositorySetup) *UseCaseSetup {
+	log *logrus.Logger, cld *cloudinary.Cloudinary, repositorySetup *repository.RepositorySetup) *UseCaseSetup {
 
 	return &UseCaseSetup{
 		AuthUseCase: NewAuthUseCase(viperConfig, db, validate, redisClient, log,
 			repositorySetup.UserRepository, repositorySetup.RoleRepository),
-		CategoryUseCase: NewCategoryUseCase(db, validate, log, repositorySetup.CategoryRepository),
+		CategoryUseCase: NewCategoryUseCase(db, validate, log,
+			repositorySetup.CategoryRepository),
+		CourseUseCase: NewCourseUseCase(db, validate, log, cld,
+			repositorySetup.CourseRepository, repositorySetup.CourseMemberRepository),
 	}
 }

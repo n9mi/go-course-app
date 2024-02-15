@@ -20,7 +20,7 @@ func NewFiber(viperConfig *viper.Viper) *fiber.App {
 
 func customErrorHandler() func(*fiber.Ctx, error) error {
 	return func(c *fiber.Ctx, err error) error {
-		var response model.WebResponse[any]
+		var response model.MessageResponse
 
 		if err != nil {
 			// Check error type
@@ -44,7 +44,7 @@ func customErrorHandler() func(*fiber.Ctx, error) error {
 					}
 				}
 			} else if errConv, ok := err.(*fiber.Error); ok {
-				response = model.WebResponse[any]{Code: errConv.Code, Messages: []string{errConv.Message}}
+				response = model.MessageResponse{Code: errConv.Code, Messages: []string{errConv.Message}}
 			}
 
 			return c.Status(response.Code).JSON(response)

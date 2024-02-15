@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/casbin/casbin/v2"
+	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/n9mi/go-course-app/database/migration"
@@ -25,6 +26,7 @@ type ConfigBootstrap struct {
 	RedisClient *redis.Client
 	Log         *logrus.Logger
 	Enforcer    *casbin.Enforcer
+	Cloudinary  *cloudinary.Cloudinary
 }
 
 func Bootstrap(configBootstrap *ConfigBootstrap) {
@@ -38,6 +40,7 @@ func Bootstrap(configBootstrap *ConfigBootstrap) {
 		configBootstrap.Validate,
 		configBootstrap.RedisClient,
 		configBootstrap.Log,
+		configBootstrap.Cloudinary,
 		repositorySetup)
 
 	// Setup controller

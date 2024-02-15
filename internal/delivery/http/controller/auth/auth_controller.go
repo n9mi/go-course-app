@@ -10,15 +10,15 @@ import (
 )
 
 type AuthController struct {
-	AuthUseCase *usecase.AuthUseCase
 	Log         *logrus.Logger
+	AuthUseCase *usecase.AuthUseCase
 }
 
 func NewAuthController(authUseCase *usecase.AuthUseCase, log *logrus.Logger) *AuthController {
 
 	return &AuthController{
-		AuthUseCase: authUseCase,
 		Log:         log,
+		AuthUseCase: authUseCase,
 	}
 }
 
@@ -34,7 +34,8 @@ func (ct *AuthController) Register(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(model.WebResponse[any]{Data: nil})
+	response := model.DataResponse[any]{Data: nil}
+	return c.Status(fiber.StatusOK).JSON(response)
 }
 
 func (ct *AuthController) Login(c *fiber.Ctx) error {
@@ -44,18 +45,20 @@ func (ct *AuthController) Login(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	response, err := ct.AuthUseCase.Login(c.UserContext(), request)
+	authData, err := ct.AuthUseCase.Login(c.UserContext(), request)
 	if err != nil {
+		ct.Log.Warnf("Failed to authenticate user : %+v", err)
 		return err
 	}
 
 	// Store refresh token in HTTP only cookie
 	cookie := new(fiber.Cookie)
-	cookie.Name = response.RefreshTokenName
-	cookie.Value = response.RefreshToken
-	cookie.Expires = time.Unix(response.RefreshExpAt, 0)
+	cookie.Name = authData.RefreshTokenName
+	cookie.Value = authData.RefreshToken
+	cookie.Expires = time.Unix(authData.RefreshExpAt, 0)
 	cookie.HTTPOnly = true
 	c.Cookie(cookie)
 
-	return c.Status(fiber.StatusOK).JSON(model.WebResponse[any]{Data: response})
+	response := model.DataResponse[model.TokenResponse]{Data: *authData}
+	return c.Status(fiber.StatusOK).JSON(response)
 }

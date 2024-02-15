@@ -12,17 +12,24 @@ type ControllerSetup struct {
 	AuthController *auth.AuthController
 
 	AdminCategoryController *admin.CategoryController
+	AdminCourseController   *admin.CourseController
 
 	UserCategoryController *user.CategoryController
+	UserCourseController   *user.CourseController
 }
 
 func Setup(useCaseSetup *usecase.UseCaseSetup, log *logrus.Logger) *ControllerSetup {
 
 	return &ControllerSetup{
+		// Authentication controller
 		AuthController: auth.NewAuthController(useCaseSetup.AuthUseCase, log),
 
+		// Admin controller
 		AdminCategoryController: admin.NewCategoryController(useCaseSetup.CategoryUseCase, log),
+		AdminCourseController:   admin.NewCourseController(useCaseSetup.CourseUseCase, log),
 
+		// User controller
 		UserCategoryController: user.NewCategoryController(useCaseSetup.CategoryUseCase, log),
+		UserCourseController:   user.NewCourseController(useCaseSetup.CourseUseCase, log),
 	}
 }

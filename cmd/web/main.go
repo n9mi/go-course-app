@@ -14,6 +14,7 @@ func main() {
 	redisClient := config.NewRedisClient(viperConfig)
 	validate := config.NewValidator(viperConfig)
 	enforcer := config.NewEnforcer(log)
+	cld := config.NewCloudinary(viperConfig, log)
 
 	configBootstrap := &config.ConfigBootstrap{
 		ViperConfig: viperConfig,
@@ -23,6 +24,7 @@ func main() {
 		RedisClient: redisClient,
 		Log:         log,
 		Enforcer:    enforcer,
+		Cloudinary:  cld,
 	}
 	config.Bootstrap(configBootstrap)
 

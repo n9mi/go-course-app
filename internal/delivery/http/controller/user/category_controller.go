@@ -11,14 +11,14 @@ import (
 )
 
 type CategoryController struct {
-	CategoryUseCase *usecase.CategoryUseCase
 	Log             *logrus.Logger
+	CategoryUseCase *usecase.CategoryUseCase
 }
 
 func NewCategoryController(categoryUseCase *usecase.CategoryUseCase, log *logrus.Logger) *CategoryController {
 	return &CategoryController{
-		CategoryUseCase: categoryUseCase,
 		Log:             log,
+		CategoryUseCase: categoryUseCase,
 	}
 }
 
@@ -30,10 +30,11 @@ func (ct *CategoryController) GetAll(c *fiber.Ctx) error {
 
 	categories, err := ct.CategoryUseCase.List(c.UserContext(), request)
 	if err != nil {
+		ct.Log.Warnf("Failed to get categories : %+v", err)
 		return err
 	}
 
-	response := model.WebResponse[[]model.CategoryResponse]{
+	response := model.DataResponse[[]model.CategoryResponse]{
 		Data: categories,
 	}
 	return c.Status(fiber.StatusOK).JSON(response)

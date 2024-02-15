@@ -2,9 +2,13 @@ p, admin, /api/admin/categories, GET
 p, admin, /api/admin/categories, POST
 p, admin, /api/admin/categories/{id}, PUT
 p, admin, /api/admin/categories/{id}, DELETE
+p, admin, /api/admin/courses, GET
+p, admin, /api/admin/courses/{id}, GET
 
 p, user, /api/categories, GET
 p, user, /api/categories/{id}, GET
+p, user, /api/courses, GET
+p, user, /api/courses/{id}, GET
 
 p, guest, /api/auth/login, POST
 p, guest, /api/auth/register, POST

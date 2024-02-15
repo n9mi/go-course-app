@@ -2,7 +2,6 @@ package admin
 
 import (
 	"strconv"
-	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/n9mi/go-course-app/internal/model"
@@ -32,7 +31,6 @@ func (ct *CategoryController) GetAll(c *fiber.Ctx) error {
 	request := new(model.CategoryListRequest)
 	request.Page, _ = strconv.Atoi(c.Query("page"))
 	request.PageSize, _ = strconv.Atoi(c.Query("pageSize"))
-	request.SortByPopular = strings.ToLower(c.Query("sortByPopular")) == "true"
 	request.UserID = authData.ID
 
 	categories, err := ct.CategoryUseCase.List(c.UserContext(), request)
@@ -40,7 +38,7 @@ func (ct *CategoryController) GetAll(c *fiber.Ctx) error {
 		return err
 	}
 
-	response := model.WebResponse[[]model.CategoryResponse]{
+	response := model.DataResponse[[]model.CategoryResponse]{
 		Data: categories,
 	}
 	return c.Status(fiber.StatusOK).JSON(response)
@@ -60,12 +58,15 @@ func (ct *CategoryController) Create(c *fiber.Ctx) error {
 	}
 	request.UserID = authData.ID
 
-	response, err := ct.CategoryUseCase.Create(c.UserContext(), request)
+	category, err := ct.CategoryUseCase.Create(c.UserContext(), request)
 	if err != nil {
 		ct.Log.Warnf("Failed to create category : %+v", err)
 		return err
 	}
 
+	response := model.DataResponse[model.CategoryResponse]{
+		Data: *category,
+	}
 	return c.Status(fiber.StatusOK).JSON(response)
 }
 
@@ -86,12 +87,15 @@ func (ct *CategoryController) Update(c *fiber.Ctx) error {
 	request.ID = categoryId
 	request.UserID = authData.ID
 
-	response, err := ct.CategoryUseCase.Update(c.UserContext(), request)
+	category, err := ct.CategoryUseCase.Update(c.UserContext(), request)
 	if err != nil {
 		ct.Log.Warnf("Failed to update category : %+v", err)
 		return err
 	}
 
+	response := model.DataResponse[model.CategoryResponse]{
+		Data: *category,
+	}
 	return c.Status(fiber.StatusOK).JSON(response)
 }
 
@@ -113,5 +117,6 @@ func (ct *CategoryController) Delete(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(model.WebResponse[any]{Data: nil})
+	response := model.DataResponse[any]{Data: nil}
+	return c.Status(fiber.StatusOK).JSON(response)
 }

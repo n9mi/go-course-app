@@ -41,6 +41,9 @@ func (c *RouteConfig) SetupAdminRoute(route fiber.Router) {
 	admin.Post("/categories", c.ControllerSetup.AdminCategoryController.Create)
 	admin.Put("/categories/:id", c.ControllerSetup.AdminCategoryController.Update)
 	admin.Delete("/categories/:id", c.ControllerSetup.AdminCategoryController.Delete)
+
+	admin.Get("/courses", c.ControllerSetup.AdminCourseController.GetAll)
+	admin.Get("/courses/:id", c.ControllerSetup.AdminCourseController.GetByID)
 }
 
 func (c *RouteConfig) SetupUserRoute(route fiber.Router) {
@@ -48,4 +51,6 @@ func (c *RouteConfig) SetupUserRoute(route fiber.Router) {
 	user.Use(c.MiddlewareSetup.AuthMiddleware)
 
 	user.Get("/categories", c.ControllerSetup.UserCategoryController.GetAll)
+	user.Get("/courses", c.ControllerSetup.UserCourseController.GetAll)
+	user.Get("/courses/:id", c.ControllerSetup.UserCourseController.GetByID)
 }
