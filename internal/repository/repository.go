@@ -9,6 +9,14 @@ func (r *Repository[T]) FindByID(tx *gorm.DB, e *T, ID any) error {
 	return tx.First(e, "id = ?", ID).Error
 }
 
+func (r *Repository[T]) Create(tx *gorm.DB, e *T) error {
+	return tx.Create(e).Error
+}
+
+func (r *Repository[T]) Updates(tx *gorm.DB, e *T) error {
+	return tx.Model(e).Updates(e).Error
+}
+
 func (r *Repository[T]) Save(tx *gorm.DB, e *T) error {
 	return tx.Save(e).Error
 }

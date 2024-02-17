@@ -4,6 +4,9 @@ p, admin, /api/admin/categories/{id}, PUT
 p, admin, /api/admin/categories/{id}, DELETE
 p, admin, /api/admin/courses, GET
 p, admin, /api/admin/courses/{id}, GET
+p, admin, /api/admin/courses, POST
+p, admin, /api/admin/courses/{id}, PUT
+p, admin, /api/admin/courses/{id}, DELETE
 
 p, user, /api/categories, GET
 p, user, /api/categories/{id}, GET

@@ -56,7 +56,7 @@ func (u *CategoryUseCase) Create(ctx context.Context, request *model.CategoryCre
 		Name:      request.Name,
 		CreatedBy: request.UserID,
 	}
-	if err := u.CategoryRepository.Repository.Save(tx, &category); err != nil {
+	if err := u.CategoryRepository.Repository.Create(tx, &category); err != nil {
 		u.Log.Warnf("Failed to insert into 'categories' : %+v", err)
 		return nil, fiber.ErrInternalServerError
 	}
@@ -91,7 +91,7 @@ func (u *CategoryUseCase) Update(ctx context.Context, request *model.CategoryUpd
 	}
 
 	category.Name = request.Name
-	if err := u.CategoryRepository.Repository.Save(tx, category); err != nil {
+	if err := u.CategoryRepository.Repository.Updates(tx, category); err != nil {
 		u.Log.Warnf("Failed to update into 'categories' : %+v", err)
 		return nil, fiber.ErrInternalServerError
 	}

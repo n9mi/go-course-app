@@ -1,5 +1,7 @@
 package model
 
+import "bytes"
+
 type CourseListRequest struct {
 	Page               int
 	PageSize           int
@@ -24,6 +26,31 @@ type CourseListResponse struct {
 type CourseGetRequest struct {
 	ID     string `validate:"requried"`
 	UserID string
+}
+
+type CourseCreateRequest struct {
+	Name        string        `json:"name" validate:"required"`
+	Description string        `json:"description" validate:"required"`
+	CategoryID  string        `json:"category_id" validate:"required"`
+	PriceIdr    float64       `json:"price_idr" validate:"required"`
+	CreatedBy   string        `json:"created_by" validate:"required"`
+	Image       *bytes.Buffer `json:"-"`
+}
+
+type CourseUpdateRequest struct {
+	ID            string        `json:"-" validate:"required"`
+	Name          string        `json:"name" validate:"required"`
+	Description   string        `json:"description" validate:"required"`
+	CategoryID    string        `json:"category_id" validate:"required"`
+	PriceIdr      float64       `json:"price_idr" validate:"required"`
+	UserID        string        `json:"-" validate:"required"`
+	Image         *bytes.Buffer `json:"-"`
+	IsRemoveImage bool          `json:"is_remove_image" validate:"required"`
+}
+
+type CourseDeleteRequest struct {
+	ID     string `json:"-" validate:"required"`
+	UserID string `json:"-" validate:"required"`
 }
 
 type CourseResponse struct {

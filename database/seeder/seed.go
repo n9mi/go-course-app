@@ -77,7 +77,7 @@ func SeedRoles(db *gorm.DB, roleRepository *repository.RoleRepository) ([]entity
 
 	for _, r := range roles {
 		tx := db.Begin()
-		if err := roleRepository.Repository.Save(tx, &r); err != nil {
+		if err := roleRepository.Repository.Create(tx, &r); err != nil {
 			tx.Rollback()
 			return nil, err
 		}
@@ -100,7 +100,7 @@ func SeedUsers(db *gorm.DB, userRepository *repository.UserRepository, roles []e
 				Password: newPassword,
 			}
 			tx := db.Begin()
-			if err := userRepository.Repository.Save(tx, &newUser); err != nil {
+			if err := userRepository.Repository.Create(tx, &newUser); err != nil {
 				tx.Rollback()
 				return nil, err
 			}
@@ -130,7 +130,7 @@ func SeedCategories(db *gorm.DB, categoryRepository *repository.CategoryReposito
 					Name:      fmt.Sprintf("Category %s", helper.GenerateRandomString(4)),
 					CreatedBy: u.ID,
 				}
-				if err := categoryRepository.Save(tx, &newCategory); err != nil {
+				if err := categoryRepository.Create(tx, &newCategory); err != nil {
 					tx.Rollback()
 					return nil, err
 				}
@@ -161,7 +161,7 @@ func SeedCourses(db *gorm.DB, courseRepository *repository.CourseRepository,
 				BannerLink:  "https://picsum.photos/400",
 				CreatedBy:   c.CreatedBy,
 			}
-			if err := courseRepository.Repository.Save(tx, &newCourse); err != nil {
+			if err := courseRepository.Repository.Create(tx, &newCourse); err != nil {
 				tx.Rollback()
 				return nil, err
 			}
@@ -188,7 +188,7 @@ func SeedPaymentMethod(db *gorm.DB, paymentMethodRepository *repository.PaymentM
 					IsCurrentlyAvailable: true,
 					CreatedBy:            u.ID,
 				}
-				if err := paymentMethodRepository.Repository.Save(tx, &newPaymentMethod); err != nil {
+				if err := paymentMethodRepository.Repository.Create(tx, &newPaymentMethod); err != nil {
 					tx.Rollback()
 					return nil, err
 				}
@@ -224,7 +224,7 @@ func SeedPurchases(db *gorm.DB, purchaseRepository *repository.PurchaseRepositor
 						PurchaseDeadline: time.Now().Add(time.Duration(24) * time.Hour),
 						PurchasedAt:      &purchasedAt,
 					}
-					if err := purchaseRepository.Repository.Save(tx, &newPurchase); err != nil {
+					if err := purchaseRepository.Repository.Create(tx, &newPurchase); err != nil {
 						tx.Rollback()
 						return nil, err
 					}

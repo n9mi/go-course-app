@@ -60,7 +60,7 @@ func (r *CourseRepository) List(tx *gorm.DB, listRequest *model.CourseListReques
 	return courses, nil
 }
 
-func (r *CourseRepository) FindByIDAndUserID(tx *gorm.DB, course *model.CourseResponse, ID string, userID string) error {
+func (r *CourseRepository) ScanByIDAndUserID(tx *gorm.DB, course *model.CourseResponse, ID string, userID string) error {
 	query := tx.Model(new(entity.Course)).
 		Select(`courses.id,
 			courses.name,
@@ -81,6 +81,10 @@ func (r *CourseRepository) FindByIDAndUserID(tx *gorm.DB, course *model.CourseRe
 	query = query.Scan(course)
 
 	return query.Error
+}
+
+func (r *CourseRepository) FindByIDAndUserID(tx *gorm.DB, course *entity.Course, ID string, userID string) error {
+	return tx.Where("id = ? and created_by = ?", ID, userID).Take(course).Error
 }
 
 func (r *CourseRepository) AddMember(tx *gorm.DB, course *entity.Course, user *entity.User) error {
