@@ -118,7 +118,6 @@ func TestLogin(t *testing.T) {
 			requestBody :=
 				fmt.Sprintf(`{"email": "%s", "password": "%s"}`,
 					testProps["request_email"], testProps["request_password"])
-			fmt.Println(requestBody)
 			request := newRequest(fiber.MethodPost, loginUrl, requestBody)
 
 			response, err := app.Test(request)
@@ -132,11 +131,9 @@ func TestLogin(t *testing.T) {
 			require.Nil(t, err)
 
 			require.Equal(t, testProps["expected_code"], response.StatusCode)
-			fmt.Println()
 
 			if response.StatusCode == fiber.StatusOK {
 				if testProps["request_email"] == validAdminData.Email {
-					fmt.Println("TEST RESPONSE", testResponse)
 					validAdminData.Token = testResponse.Data.AccessToken
 					require.NotEmpty(t, validAdminData.Token)
 
@@ -147,7 +144,6 @@ func TestLogin(t *testing.T) {
 					validAdminData.ID = authData.ID
 					validAdminData.Roles = authData.Roles
 				} else if testProps["request_email"] == validUserData.Email {
-					fmt.Println("TEST RESPONSE", testResponse)
 					validUserData.Token = testResponse.Data.AccessToken
 					require.NotEmpty(t, validUserData.Token)
 

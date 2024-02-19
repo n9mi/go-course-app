@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/casbin/casbin/v2"
@@ -38,8 +37,6 @@ func NewAuthMiddleware(viperConfig *viper.Viper, redisClient *redis.Client, vali
 		if err != nil {
 			return err
 		}
-
-		fmt.Println("PATH: ", c.Path())
 
 		// Apply casbin enforcer, loop through roles
 		roles := userAuthData.Roles

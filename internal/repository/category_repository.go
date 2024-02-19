@@ -21,7 +21,7 @@ func (r *CategoryRepository) List(tx *gorm.DB, listRequest *model.CategoryListRe
 	if listRequest.Page > 0 && listRequest.PageSize > 0 {
 		tx = tx.Scopes(helper.Paginate(listRequest.Page, listRequest.PageSize))
 	}
-	query := tx.Model(new(entity.Category)).
+	tx = tx.Model(new(entity.Category)).
 		Select(`categories.id,
 			categories.name,
 			categories.created_at,
@@ -31,16 +31,16 @@ func (r *CategoryRepository) List(tx *gorm.DB, listRequest *model.CategoryListRe
 		Joins("inner join users on users.id = categories.created_by")
 
 	if len(listRequest.UserID) > 0 {
-		query = query.Where("categories.created_by = ?", listRequest.UserID)
+		tx = tx.Where("categories.created_by = ?", listRequest.UserID)
 	}
 
 	if listRequest.SortByPopular {
-		query = query.Order("member_count DESC")
+		tx = tx.Order("member_count DESC")
 	} else {
-		query = query.Order("created_at ASC")
+		tx = tx.Order("created_at ASC")
 	}
 
-	if err := query.Scan(&categories).Error; err != nil {
+	if err := tx.Scan(&categories).Error; err != nil {
 		return nil, err
 	}
 
@@ -48,7 +48,7 @@ func (r *CategoryRepository) List(tx *gorm.DB, listRequest *model.CategoryListRe
 }
 
 func (r *CategoryRepository) FindByID(tx *gorm.DB, category *model.CategoryResponse, ID string) error {
-	query := tx.Model(new(entity.Category)).
+	tx = tx.Model(new(entity.Category)).
 		Select(`categories.id,
 			categories.name,
 			categories.created_at,
@@ -58,7 +58,7 @@ func (r *CategoryRepository) FindByID(tx *gorm.DB, category *model.CategoryRespo
 		Joins("inner join users on users.id = categories.created_by").
 		Where("categories.id = ?", ID)
 
-	if err := query.Scan(&category).Error; err != nil {
+	if err := tx.Scan(&category).Error; err != nil {
 		return err
 	}
 

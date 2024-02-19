@@ -13,9 +13,10 @@ type ControllerSetup struct {
 
 	AdminCategoryController *admin.CategoryController
 	AdminCourseController   *admin.CourseController
+	AdminUserController     *admin.UserController
 
 	UserCategoryController *user.CategoryController
-	UserCourseController   *user.CourseController
+	CourseController       *user.CourseController
 }
 
 func Setup(useCaseSetup *usecase.UseCaseSetup, log *logrus.Logger) *ControllerSetup {
@@ -27,9 +28,10 @@ func Setup(useCaseSetup *usecase.UseCaseSetup, log *logrus.Logger) *ControllerSe
 		// Admin controller
 		AdminCategoryController: admin.NewCategoryController(useCaseSetup.CategoryUseCase, log),
 		AdminCourseController:   admin.NewCourseController(useCaseSetup.CourseUseCase, log),
+		AdminUserController:     admin.NewUserController(useCaseSetup.UserUseCase, log),
 
 		// User controller
 		UserCategoryController: user.NewCategoryController(useCaseSetup.CategoryUseCase, log),
-		UserCourseController:   user.NewCourseController(useCaseSetup.CourseUseCase, log),
+		CourseController:       user.NewCourseController(useCaseSetup.CourseUseCase, log),
 	}
 }

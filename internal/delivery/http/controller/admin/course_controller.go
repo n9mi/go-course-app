@@ -1,7 +1,6 @@
 package admin
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -35,8 +34,6 @@ func (ct *CourseController) GetAll(c *fiber.Ctx) error {
 	request.Page, _ = strconv.Atoi(c.Query("page"))
 	request.PageSize, _ = strconv.Atoi(c.Query("pageSize"))
 	request.UserID = authData.ID
-
-	fmt.Println(authData)
 
 	courses, err := ct.CourseUseCase.List(c.UserContext(), request)
 	if err != nil {
