@@ -8,6 +8,7 @@ p, admin, /api/admin/courses, POST
 p, admin, /api/admin/courses/{id}, PUT
 p, admin, /api/admin/courses/{id}, DELETE
 p, admin, /api/admin/users, GET
+p, admin, /api/admin/users/{id}, DELETE
 
 p, user, /api/categories, GET
 p, user, /api/categories/{id}, GET

@@ -41,3 +41,18 @@ func (ct *UserController) GetAll(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(response)
 }
+
+func (ct *UserController) Delete(c *fiber.Ctx) error {
+	request := new(model.UserDeleteRequest)
+	request.ID = c.Params("id")
+
+	if err := ct.UserUseCase.Delete(c.UserContext(), request); err != nil {
+		ct.Log.Warnf("Failed to delete users : %+v", err)
+		return err
+	}
+
+	response := model.DataResponse[any]{
+		Data: nil,
+	}
+	return c.Status(fiber.StatusOK).JSON(response)
+}

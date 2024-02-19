@@ -10,6 +10,10 @@ type UserListRequest struct {
 	FilterRoleID []string
 }
 
+type UserDeleteRequest struct {
+	ID string `validate:"required"`
+}
+
 type RoleListResponse struct {
 	Name    string    `json:"name"`
 	AddedAt time.Time `json:"added_at"`

@@ -27,7 +27,7 @@ func Setup(viperConfig *viper.Viper, db *gorm.DB, validate *validator.Validate, 
 			repositorySetup.CategoryRepository),
 		CourseUseCase: NewCourseUseCase(db, validate, log, cld,
 			repositorySetup.CourseRepository, repositorySetup.CourseMemberRepository),
-		UserUseCase: NewUserUseCase(viperConfig, db, validate, log,
+		UserUseCase: NewUserUseCase(viperConfig, db, validate, redisClient, log,
 			repositorySetup.UserRepository, repositorySetup.RoleRepository),
 	}
 }

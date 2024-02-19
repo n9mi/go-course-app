@@ -78,3 +78,15 @@ func (r *UserRepository) GetRoles(tx *gorm.DB, user *entity.User) ([]entity.Role
 
 	return rolesFound, err
 }
+
+func (r *UserRepository) Delete(tx *gorm.DB, user *entity.User) error {
+	if err := tx.Model(user).Association("Roles").Clear(); err != nil {
+		return err
+	}
+
+	if err := r.Repository.Delete(tx, user); err != nil {
+		return err
+	}
+
+	return nil
+}
