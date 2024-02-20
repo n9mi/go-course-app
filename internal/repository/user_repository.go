@@ -60,6 +60,10 @@ func (r *UserRepository) List(tx *gorm.DB, listRequest *model.UserListRequest) (
 	return users, err
 }
 
+func (r *UserRepository) FindByID(tx *gorm.DB, user *entity.User, ID string) error {
+	return tx.Preload("Roles").Find(&user, "id = ?", ID).Error
+}
+
 func (r *UserRepository) FindByEmail(tx *gorm.DB, user *entity.User, email string) error {
 	return tx.First(user, "email = ?", strings.ToLower(email)).Error
 }
@@ -77,6 +81,10 @@ func (r *UserRepository) GetRoles(tx *gorm.DB, user *entity.User) ([]entity.Role
 	err := tx.Model(user).Association("Roles").Find(&rolesFound)
 
 	return rolesFound, err
+}
+
+func (r *UserRepository) ReplaceRoles(tx *gorm.DB, user *entity.User, roles []entity.Role) error {
+	return tx.Model(user).Association("Roles").Replace(roles)
 }
 
 func (r *UserRepository) Delete(tx *gorm.DB, user *entity.User) error {

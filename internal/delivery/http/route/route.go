@@ -49,6 +49,7 @@ func (c *RouteConfig) SetupAdminRoute(route fiber.Router) {
 	admin.Delete("/courses/:id", c.ControllerSetup.AdminCourseController.Delete)
 
 	admin.Get("/users", c.ControllerSetup.AdminUserController.GetAll)
+	admin.Put("/users/:id", c.ControllerSetup.AdminUserController.UpdateRoles)
 	admin.Delete("/users/:id", c.ControllerSetup.AdminUserController.Delete)
 }
 

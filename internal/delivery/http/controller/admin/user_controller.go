@@ -28,7 +28,14 @@ func (ct *UserController) GetAll(c *fiber.Ctx) error {
 	request.PageSize, _ = strconv.Atoi(c.Query("pageSize"))
 	request.SearchName = strings.ToLower(c.Query("name"))
 	request.SearchEmail = strings.ToLower(c.Query("email"))
-	request.FilterRoleID = strings.Split(c.Query("role_id"), ",")
+	request.RoleIDs = strings.ToLower(c.Query("role_ids"))
+	if len(request.RoleIDs) > 0 && strings.Contains(request.RoleIDs, ",") {
+		request.FilterRoleID = strings.Split(request.RoleIDs, ",")
+	} else if len(request.RoleIDs) > 0 {
+		request.FilterRoleID = []string{request.RoleIDs}
+	} else {
+		request.FilterRoleID = make([]string, 0)
+	}
 
 	users, err := ct.UserUseCase.List(c.UserContext(), request)
 	if err != nil {
@@ -36,8 +43,29 @@ func (ct *UserController) GetAll(c *fiber.Ctx) error {
 		return err
 	}
 
-	response := model.DataResponse[[]model.UserListResponse]{
+	response := model.DataResponse[[]model.UserResponse]{
 		Data: users,
+	}
+	return c.Status(fiber.StatusOK).JSON(response)
+}
+
+func (ct *UserController) UpdateRoles(c *fiber.Ctx) error {
+	request := new(model.UserUpdateRolesRequest)
+	request.UserID = c.Params("id")
+
+	if err := c.BodyParser(request); err != nil {
+		ct.Log.Warnf("Failed to parsing request : %+v", err)
+		return fiber.ErrBadRequest
+	}
+
+	user, err := ct.UserUseCase.UpdateRoles(c.UserContext(), request)
+	if err != nil {
+		ct.Log.Warnf("Failed to update roles for user with ID %s : %+v", request.UserID, err)
+		return err
+	}
+
+	response := model.DataResponse[model.UserResponse]{
+		Data: *user,
 	}
 	return c.Status(fiber.StatusOK).JSON(response)
 }
