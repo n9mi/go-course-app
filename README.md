@@ -20,6 +20,7 @@ go run cmd/web/main.go
 ```
 
 ## **Run the migration**
+![image](https://github.com/n9mi/go-course-app/assets/113373725/abadb66a-f5c7-45c7-bd50-f81800b841d3)
 Migration will automatically run when the server 
 
 ## **Structure**
