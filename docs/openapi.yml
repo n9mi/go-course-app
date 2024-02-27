@@ -37,7 +37,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./schema/response/message_response.yml"
+                $ref: "./schema/response/data_empty_response.yml"
         "400":
           description: Form validation error
           content:
@@ -276,7 +276,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./schema/response/message_response.yml"
+                $ref: "./schema/response/data_empty_response.yml"
         "400":
           description: Form validation error
           content:
@@ -478,7 +478,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./schema/response/message_response.yml"
+                $ref: "./schema/response/data_empty_response.yml"
         "400":
           description: Form validation error
           content:
@@ -515,6 +515,21 @@ paths:
           schema:
             type: integer
             minimum: 1
+        - in: query
+          name: name
+          description: filter user by name, case insensitive
+          schema:
+            type: string 
+        - in: query
+          name: email
+          description: filter user by email, case insensitive
+          schema:
+            type: string 
+        - in: query
+          name: role_ids
+          description: filter user by role id separated by (,), case insensitive
+          schema:
+            type: string
       tags:
         - "Admin"
       security:
@@ -552,18 +567,29 @@ paths:
         schema:
           type: string
         required: true
-    get:
+    put:
       tags:
         - "Admin"
       security:
         - bearer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./schema/request/update_user_request.yml"
       responses:
         "200":
-          description: Success getting a user
+          description: Success updating user role
           content:
             application/json:
               schema:
                 $ref: "./schema/response/user_response.yml"
+        "400":
+          description: Form validation error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/response/message_response.yml"
         "401":
           description: Unauthorized, unauthenticated user, missing token
           content:
@@ -587,7 +613,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./schema/response/message_response.yml"
+                $ref: "./schema/response/data_empty_response.yml"
         "401":
           description: Unauthorized, unauthenticated user, missing token
           content:
@@ -628,92 +654,4 @@ paths:
             application/json:
               schema:
                 $ref: "./schema/response/message_response.yml"
-  #
-  # Buy course
-  #
-  /course/{id}/buy:
-    post:
-      tags:
-        - "User"
-      parameters:
-        - in: path
-          name: id
-          description: course ID
-          required: true
-          schema:
-            type: string
-      security:
-        - bearer: []
-      requestBody:
-        content:
-          application/json: 
-            schema:
-              $ref: "./schema/request/buy_course_request.yml"
-      responses:
-        "200":
-          description: "Success making a purchase. Purchase status will be pending - waiting for payment"
-          content:
-            application/json:
-              schema:
-                $ref: "./schema/response/purchase_response.yml"
-        "400":
-          description: Form validation error
-          content:
-            application/json:
-              schema:
-                $ref: "./schema/response/message_response.yml"
-        "401":
-          description: Unauthorized, unauthenticated user, missing token
-          content:
-            application/json:
-              schema:
-                $ref: "./schema/response/message_response.yml"
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: "./schema/response/message_response.yml"
-  #
-  # Purchase course
-  #
-  /purchases/{id}/pay:
-    post:
-      tags:
-        - "User"
-      parameters:
-        - in: path
-          name: id
-          description: purchase ID
-          required: true
-          schema:
-            type: string
-      security:
-        - bearer: []
-      responses:
-        "200":
-          description: "Success making a purchase. Purchase status will be success."
-          content:
-            application/json:
-              schema:
-                $ref: "./schema/response/purchase_response.yml"
-        "400":
-          description: Form validation error
-          content:
-            application/json:
-              schema:
-                $ref: "./schema/response/message_response.yml"
-        "401":
-          description: Unauthorized, unauthenticated user, missing token
-          content:
-            application/json:
-              schema:
-                $ref: "./schema/response/message_response.yml"
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: "./schema/response/message_response.yml"
-
-
+ 

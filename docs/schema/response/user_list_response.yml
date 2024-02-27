@@ -3,11 +3,4 @@ properties:
   data:
     type: array
     items:
-      type: object 
-      properties:
-        id:
-          type: string 
-        name: 
-          type: string 
-        email:
-          type: string 
+      $ref: "./user_response.yml"

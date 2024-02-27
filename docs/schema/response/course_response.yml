@@ -19,6 +19,8 @@ properties:
         type: integer
       created_by:
         type: string 
+      member_count:
+        type: string
       created_at:
         type: string 
       updated_at:

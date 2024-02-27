@@ -8,7 +8,7 @@ properties:
     type: string 
   priceIdr:
     type: float
-  bannerImage:
+  image:
     type: string 
     format: binary
   

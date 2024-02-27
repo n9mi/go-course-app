@@ -1,17 +1,21 @@
-type: object
+type: object 
 properties:
-  data:
+  id:
+    type: string 
+  name: 
+    type: string 
+  email:
+    type: string 
+  roles:
     type: array
-    items:
-      type: object 
+    items: 
+      type: object
       properties:
-        id:
+        id:   
           type: string 
-        name: 
+        display_name:
           type: string 
-        email:
-          type: string 
-        created_at:
-          type: string 
-        updated_at:
+        added_at: 
           type: string
+  joined_at:
+    type: string
